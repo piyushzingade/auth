@@ -1,13 +1,16 @@
 
 import express from 'express'
 import { Logout, signin, signup } from '../controller/auth.controller';
+import { verify } from 'crypto';
 
 export const authRoutes = express.Router();
 
 authRoutes.post('/signup' , signup)
 
 
-authRoutes.get('/signin' ,signin)
+authRoutes.post('/signin' ,signin)
 
 
-authRoutes.get('/logout' , Logout)
+authRoutes.post('/logout' , Logout)
+
+authRoutes.post("/verify-email" , verifyemail);
