@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { User } from "../models/user.model";
 import { generateTokenandSetCookie } from "../utils/generateTokenandSetCookie";
 import omit from 'lodash.omit';
+import { sendVerficationEmail } from "../mailtrap/emails";
 
 
 
@@ -33,6 +34,9 @@ export const signup = async (req: Request, res: Response) => {
 
         // JWT
         generateTokenandSetCookie(res, user._id.toString());
+
+        await sendVerficationEmail(user.email, verficationToken);
+
 
         // Remove password from the response object
         const userResponse = omit(user.toObject(), ['password']);
