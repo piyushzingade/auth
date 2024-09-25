@@ -10,7 +10,7 @@ import {
   sendWelcomeEmail,
 } from "../mailtrap/emails.js";
 import { User } from "../models/user.model.js";
-
+import { ObjectId } from "mongoose";
 
 // Extend Request type to include userId
 interface AuthenticatedRequest extends Request {

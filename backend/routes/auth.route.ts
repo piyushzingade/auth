@@ -1,3 +1,4 @@
+
 import express from "express";
 import {
 	login,
@@ -22,4 +23,3 @@ authRoutes.post("/verify-email", verifyEmail);
 authRoutes.post("/forgot-password", forgotPassword);
 
 authRoutes.post("/reset-password/:token", resetPassword);
-
