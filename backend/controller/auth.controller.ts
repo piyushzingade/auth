@@ -110,7 +110,7 @@ export const signin = async (req: Request, res: Response) => {
     res.send("Sign in Route");
 };
 
-// export const logout = async (req: Request, res: Response) => {
-//     res.clearCookie("token");
-//     res.status(200).json({success : true , message : "Logged out Successfully"})
-// };
+export const logout = async (req: Request, res: Response) => {
+    res.clearCookie("token");
+    res.status(200).json({success : true , message : "Logged out Successfully"})
+};

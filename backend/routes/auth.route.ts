@@ -11,7 +11,7 @@ authRoutes.post('/signup' , signup)
 authRoutes.post('/signin' ,signin)
 
 
-// authRoutes.post('/logout' , logout)
+authRoutes.post('/logout' , logout)
 
 
 authRoutes.post("/verify-email" , verifyEmail);
