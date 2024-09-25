@@ -106,8 +106,44 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
     }
 };
 
-export const signin = async (req: Request, res: Response) => {
-    res.send("Sign in Route");
+export const login = async (req: Request, res: Response): Promise<void> => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        // Check if user exists
+        if (!user) {
+            res.status(400).json({ success: false, message: "Invalid inputs" });
+            return;
+        }
+
+        // Check if password is valid
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            res.status(400).json({ success: false, message: "Invalid inputs" });
+            return;
+        }
+
+        // Generate token and set it in cookies
+        generateTokenandSetCookie(res, user._id.toString()); // Convert ObjectId to string
+
+        // Update user's last login
+        user.lastLogin = new Date();
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Logged in successfully",
+            user: {
+                ...user.toObject(),
+                password: undefined, // Remove password from the response
+            },
+        });
+    } catch (error) {
+        console.log("Error in login:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
 };
 
 export const logout = async (req: Request, res: Response) => {
