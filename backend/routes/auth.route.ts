@@ -5,13 +5,13 @@ import { logout, signin, signup, verifyEmail } from '../controller/auth.controll
 
 export const authRoutes = express.Router();
 
-authRoutes.post('/signup' , signup)
+authRoutes.post('/signup', signup)
 
 
-authRoutes.post('/signin' ,signin)
+authRoutes.post('/signin',signin)
 
 
-authRoutes.post('/logout' , logout)
+authRoutes.post('/logout', logout)
 
 
-authRoutes.post("/verify-email" , verifyEmail);
+authRoutes.post("/verify-email", verifyEmail);
