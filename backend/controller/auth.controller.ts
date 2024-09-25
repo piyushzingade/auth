@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { User } from "../models/user.model";
 import { generateTokenandSetCookie } from "../utils/generateTokenandSetCookie";
 import omit from 'lodash.omit';
-import { sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/emails";
+import { sendPasswordResetEmail, sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/emails";
 
 export const signup = async (req: Request, res: Response) => {
     const { email, password, name } = req.body;
@@ -149,4 +150,41 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 export const logout = async (req: Request, res: Response) => {
     res.clearCookie("token");
     res.status(200).json({success : true , message : "Logged out Successfully!!!"})
+};
+
+
+export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        // Check if user exists
+        if (!user) {
+             res.status(400).json({ success: false, message: "User not found" });
+             return;
+        }
+
+        // Generate reset token and expiration time
+        const resetToken = crypto.randomBytes(20).toString("hex");
+        const resetTokenExpiresAt = new Date(Date.now() + 1 * 60 * 60 * 1000); // Convert timestamp to Date
+
+        // Assign the token and expiration to the user
+        user.resetPasswordToken = resetToken;
+        user.resentPasswordExpiresAt = resetTokenExpiresAt;
+
+        // Send password reset email
+        await sendPasswordResetEmail(user.email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`);
+
+        // Save the user with updated token and expiration time
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Password reset email sent successfully",
+        });
+    } catch (error) {
+        console.log("Error in forgotPassword:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
 };
